@@ -1,15 +1,19 @@
-let btnEnviar = document.querySelector(".enviar");
-let corpoLista = document.querySelector(".lista");
+const btnEnviar = document.querySelector(".enviar");
+const corpoLista = document.querySelector(".lista");
 let cardsCriados = localStorage.getItem("cards") ? JSON.parse(localStorage.getItem("cards")) : [];
-let btnLimpar = document.querySelector(".limpar");
-let navegacao = document.querySelectorAll(".botao-nav");
-let containerCalculadora = document.querySelector(".calculadora");
-let formularioToList = document.querySelector(".formulario");
-let cards = document.querySelector(".cards");
+const btnLimpar = document.querySelector(".limpar");
+const botoesCalcul = document.querySelectorAll('.botoes button:not(#botao-calcular)');
+const botoesDivisor = document.querySelectorAll(".divisores button:not(#botao-excluir)");
+const displayCalcu = document.querySelector("#display-calcul");
+const botaoExcluir = document.querySelector("#botao-excluir");
+const botaoCalcular = document.querySelector("#botao-calcular");
+let toastLiveExample = document.getElementById('liveToast');
+let primeiroValor = 0;
+let segundoValor = 0;
+let divisorSelecionado = "";
 
-
-
-
+console.log(divisorSelecionado);
+console.log(botoesDivisor)
 btnLimpar.addEventListener("click", function(){
     localStorage.clear();
     location.reload();
@@ -64,6 +68,9 @@ btnEnviar.addEventListener("click", function(event){
     criarCards(novoCard);
     document.querySelector("#textouser").value = "";
     localStorage.setItem("cards", JSON.stringify(cardsCriados));
+
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+    toastBootstrap.show();
 })
 
 corpoLista.addEventListener("click", function(event){
@@ -82,35 +89,63 @@ corpoLista.addEventListener("click", function(event){
         cardClicado.parentElement.remove();
     }
 })
-navegacao.forEach(button => {
-    button.addEventListener("click",function(event){
-        let secaoClicado = event.target.dataset.secao;
-        
-        if(secaoClicado === "home"){
-            containerCalculadora.classList.add("desativo");
-            setTimeout(function(){
-                containerCalculadora.style.display = "none";
-            },800)
-            formularioToList.style.display = ""; // Remove o display: none anterior
-            formularioToList.classList.remove("desativo");
-            formularioToList.classList.add("ativo");
-            
-            cards.style.display = "";
-            cards.classList.remove("desativo");
-
-        }
-        else if(secaoClicado === "calculadora"){
-            formularioToList.classList.add("desativo");
-            cards.classList.add("desativo");
-
-            setTimeout(function(){
-                formularioToList.style.display = "none";
-                cards.style.display = "none";
-                },800)
-            containerCalculadora.style.display = "";
-            containerCalculadora.classList.add("ativo");
-        }
-        
-        
+botoesCalcul.forEach((button) => {
+    button.addEventListener("click",function(){
+        let botaoNumero = button.textContent;
+        displayCalcu.value += botaoNumero;
     })
+});
+botoesDivisor.forEach((button) => {
+    button.addEventListener("click",function(){
+        if(divisorSelecionado !== ""){
+            return
+        }
+        if(displayCalcu.value === ""){
+            return;
+        }
+
+        primeiroValor = parseFloat(displayCalcu.value)
+        divisorSelecionado = ` ${button.textContent} `;
+        displayCalcu.value += divisorSelecionado;
+        console.log(primeiroValor);
+        console.log(divisorSelecionado);
+    })
+});
+botaoCalcular.addEventListener("click", function(){
+        
+
+        let valorvisor = displayCalcu.value;
+        
+        let partes = valorvisor.split(divisorSelecionado);
+        
+        let segundoValor = parseFloat(partes[1])
+
+        let resultado = 0;
+        let sinal = divisorSelecionado.trim();
+
+        if(sinal === "x"){
+            resultado = primeiroValor * segundoValor;
+            displayCalcu.value = resultado;
+        }else if(sinal === "-"){
+            resultado = primeiroValor - segundoValor;
+            displayCalcu.value = resultado
+        }else if(sinal === "+"){
+            resultado = primeiroValor + segundoValor;
+            displayCalcu.value = resultado
+        }else if(sinal === "÷"){
+            resultado = primeiroValor / segundoValor;
+            displayCalcu.value = resultado
+        }
+        
+        primeiroValor = 0;
+        segundoValor = 0;
+        divisorSelecionado= "";
+    })
+botaoExcluir.addEventListener("click", function(){
+        displayCalcu.value = displayCalcu.value.slice(0, -1);
+        if(displayCalcu.value === ""){
+            primeiroValor = 0;
+            segundoValor = 0;
+            divisorSelecionado = "";
+        }
 });
