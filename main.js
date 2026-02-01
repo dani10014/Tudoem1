@@ -78,14 +78,10 @@ corpoLista.addEventListener("click", function(event){
         let cardClicado = event.target.closest(".card");
         let idProduto = cardClicado.dataset.id;
         
-        // 1. Filtra o array, criando uma nova lista sem o card que foi clicado.
-        // Note que o ID do dataset é uma string, então o convertemos para número para a comparação.
         cardsCriados = cardsCriados.filter(card => card.id !== Number(idProduto));
 
-        // 2. Salva a nova lista (já sem o card) no localStorage.
         localStorage.setItem("cards", JSON.stringify(cardsCriados));
 
-        // 3. Remove o elemento da tela (a coluna que contém o card).
         cardClicado.parentElement.remove();
     }
 })
