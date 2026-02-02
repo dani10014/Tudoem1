@@ -63,3 +63,11 @@ body{
 .botao-calcular{
     width: 90%;
 }
+.cards{
+    height: 100px;
+    border:1px solid black;
+}
+.cabecalho-jogo-da-velha{
+    height: 100%;
+    color: #fff;
+}
